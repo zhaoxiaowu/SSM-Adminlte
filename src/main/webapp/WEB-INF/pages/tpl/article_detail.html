@@ -1,0 +1,60 @@
+<div class="content-header">
+  <!-- Content Header (Page header) -->
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">文章管理</h1>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+<!-- /.content-header -->
+<!-- Horizontal Form -->
+ <div class="card card-info">
+      <div class="card-header with-border">
+        <h3 class="card-title">文章详情</h3>
+      </div>
+      <!-- /.card-header -->
+      <!-- form start -->
+        <div class="card-body">
+        	<h3 id="title"></h3>
+        	作者：<p id="author"></p>
+        	<p id="content"></p>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+          <button type="button" class="btn btn-default btn-cancel pull-right">返回</button>
+        </div>
+        <!-- /.card-footer -->    
+    </div>
+<script type="text/javascript">
+ $(function(){
+	  initArticleDetail();
+	  $(".btn-cancel").click(doCancel);
+ });
+ function doCancel(){
+	$(".content-wrapper").load("article/listUI.do");
+	$(".content-wrapper").removeData("id");
+ }
+ function initArticleDetail(){
+	var id=$(".content-wrapper").data("id");
+	 var url="article/findObjectById.do";
+	 var params={"id":id}
+	 $.getJSON(url,params,function(result){
+		 if(result.state==1){
+			 	$("#title").html(result.data.title);
+			    $("#author").html(result.data.author);
+			    $("#content").html(result.data.content);
+		 }else{
+			alert(result.message);
+		 }
+	 })
+ }
+</script>
+    
+    
+    
+    
+    
+    
+    

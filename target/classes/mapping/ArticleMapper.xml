@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.adminlte.dao.ArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.ssm.adminlte.entity.Article" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="articleType_id" property="articletypeId" jdbcType="BIGINT" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="createtime" property="createtime" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.ssm.adminlte.entity.Article" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, articleType_id, author, createtime, title
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_article
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_article
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ssm.adminlte.entity.Article" >
+    insert into sys_article (id, articleType_id, author, 
+      createtime, title, content
+      )
+    values (#{id,jdbcType=BIGINT}, #{articletypeId,jdbcType=BIGINT}, #{author,jdbcType=VARCHAR}, 
+      now(), #{title,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ssm.adminlte.entity.Article" >
+    insert into sys_article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="articletypeId != null" >
+        articleType_id,
+      </if>
+      <if test="author != null" >
+        author,
+      </if>
+      <if test="createtime != null" >
+        createtime,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="articletypeId != null" >
+        #{articletypeId,jdbcType=BIGINT},
+      </if>
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        now(),
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssm.adminlte.entity.Article" >
+    update sys_article
+    <set >
+      <if test="articletypeId != null" >
+        articleType_id = #{articletypeId,jdbcType=BIGINT},
+      </if>
+      <if test="author != null" >
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=BIGINT},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ssm.adminlte.entity.Article" >
+    update sys_article
+    set articleType_id = #{articletypeId,jdbcType=BIGINT},
+      author = #{author,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ssm.adminlte.entity.Article" >
+    update sys_article
+    set articleType_id = #{articletypeId,jdbcType=BIGINT},
+      author = #{author,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 分页查询文章 -->
+   <select id="findObjectByPage" resultType="map">
+           select a.*,t.category
+           from sys_article a left join sys_articletype t
+           on a.articleType_id=t.id
+           order by a.createtime desc
+           limit #{start},#{length}
+   </select>
+   <!-- 得到总记录数 -->
+   <select id="getRowCount" resultType="int">
+           select count(*)
+           from sys_article
+    </select>
+</mapper>

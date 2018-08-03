@@ -1,0 +1,166 @@
+<!-- DataTables -->
+<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap4.css">
+<div class="content-header">
+  <!-- Content Header (Page header) -->
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Starter Page</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Starter Page</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+<!-- /.content-header -->
+
+<!-- Main content -->
+<div class="content">
+ <div class="row">
+        <div class="col-12">
+		  <!-- card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Data Table With Full Features</h3>
+            </div>
+            <!-- /.card-header -->
+			<div class="card-body">
+              <table id="datatable" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>标题</th>
+                  <th>作者</th>
+                  <th>分类</th>
+                  <th>发表时间</th>
+                </tr>
+                </thead>
+                <tbody id="tbodyId">
+                </tbody>
+              </table>
+
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+          <ul class="pagination">
+          </ul>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.content -->
+<!-- DataTables -->
+<script src="plugins/datatables/jquery.dataTables.js"></script>
+<script src="plugins/datatables/dataTables.bootstrap4.js"></script>
+<script  type="text/javascript">
+  /* 使用JQuery Datatable处理表格 */
+  $(function () {
+    $('#datatable').DataTable({
+    	"bProcessing": true,
+    	"ordering": true,
+    	"serverSide": true,
+        "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 0 ] }],
+        "aaSorting": [[1, "asc"]],
+/*       "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": true,
+      "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 0 ] }],
+      "aaSorting": [[1, "asc"]], */
+      "ajax": "getList.do",
+      "columns": [
+    	  {   "data": "id","render": function ( data, type, row ) {
+              //return '<a href="###">' + data + '</a>';
+              return "<input type='radio' name='radioId' value=" + data + ">";
+          }},
+          { "data": "title" },
+          { "data": "author" },
+          { "data": "category" },
+          { "data": "createtime" }
+
+      ]
+    });
+
+/* 	   $.getJSON("findAllByPage/1.do",function(result){
+			  setTableBodyRows(result.article);
+		   }); */
+	/* 替换datatable的搜索 */
+    $("#datatable_filter").css("display","none");
+    var html ='<div class="input-group input-group-sm" style="width: 350px;float:right;padding-right: 8px;"><input type="text" name="table_search" id="searchNameId" class="form-control pull-right" placeholder="题目"><div class="input-group-btn"><button type="button" class="btn btn-default btn-search"><i class="fa fa-search"></i></button><button type="button" class="btn btn-default btn-add">添加</button><button type="button" class="btn btn-default btn-update">修改</button><button type="button" class="btn btn-default btn-delete">删除</button></div></div>';
+    $("#datatable_filter").parent().append(html);
+    /* 为按钮添加事件 */
+    $(".btn-add").click(doAddObject);
+    $(".btn-update").click(doUpdateObject);
+    $(".btn-delete").click(doDeleteObject);
+    //$(".btn-search").click(doQueryObjects);
+/* 	$(".input-group-btn")
+	   .on("click",".btn-search",doQueryObjects)
+	   .on("click",".btn-add,.btn-update",doAddOrUpdate); */
+  });
+  function doAddObject(){
+	  title="添加文章";
+	  doLoadEdit(title);
+  }
+  function doUpdateObject(){
+	   title="修改文章";
+	   var id=getCheckedId();
+		if(typeof(id)=="undefined"){
+			 alert("请选择要修改的数据");
+			 return;
+		 } 
+	   $(".content-wrapper").data("id",id);
+	  doLoadEdit(title);
+  }
+  function doDeleteObject(){
+	 var id=getCheckedId();
+	 if(typeof(id)=="undefined"){
+		 alert("请选择要删除的数据");
+		 return;
+	 } 
+	 alert("qw");
+	 var url="deleteArticle.do";
+	 var params={"id":id}
+	 $.getJSON(url,params,function(result){
+		 if(result.state==1){
+			$(".content-wrapper").load("listUI.do");
+			$(".content-wrapper").removeData("id");
+		 }else{
+			alert(result.message);
+		 }
+	 })
+  }
+ /*  function doAddOrUpdate(){
+	  alert("edit");
+	   //1.判定点击的对象
+	   var title;
+	   if($(this).hasClass("btn-add")){
+		   title="添加用户";
+		   doLoadEditPage(title);
+	   }else if($(this).hasClass("btn-update")){
+		   title="修改用户";
+		   var id=getCheckedId();
+		   alert("修改用户");
+		   console.log("id="+id)
+		   $(".content-wrapper").data("id",id);
+		  
+		   doLoadEditPage(title);
+	   }
+  } */
+  function getCheckedId(){
+	   return $("tbody input[name='radioId']:checked").val();
+  }
+  function doLoadEdit(title){
+	   var url="editUI.do"
+	   $(".content-wrapper").load(url,function(){
+		   $(".card-title").html(title);
+	   }) 
+  }
+</script>

@@ -1,0 +1,143 @@
+<!-- DataTables -->
+<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap4.css">
+
+<!-- Main content -->
+<div class="content">
+ <div class="row">
+        <div class="col-12">
+		  <!-- card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">文章管理</h3>
+            </div>
+            <!-- /.card-header -->
+			<div class="card-body">
+              <table id="datatable" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>分类</th>
+                </tr>
+                </thead>
+                <tbody id="tbodyId">
+                </tbody>
+              </table>
+
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+          <ul class="pagination">
+          </ul>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.content -->
+<!-- DataTables -->
+<script src="plugins/datatables/jquery.dataTables.js"></script>
+<script src="plugins/datatables/dataTables.bootstrap4.js"></script>
+<script  type="text/javascript">
+  /* 使用JQuery Datatable处理表格 */
+  $(function () {
+    $('#datatable').DataTable({
+    	"bProcessing": true,
+    	"ordering": true,
+    	"serverSide": true,
+        "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 0 ] }],
+        "aaSorting": [[1, "asc"]],
+/*       "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": false,
+      "autoWidth": true,
+      "aoColumnDefs": [ { "bSortable": false, "aTargets": [ 0 ] }],
+      "aaSorting": [[1, "asc"]], */
+      "ajax": "articleType/getList.do",
+      "columns": [
+    	  {   "data": "id","render": function ( data, type, row ) {
+              //return '<a href="###">' + data + '</a>';
+              return "<input type='radio' name='radioId' value=" + data + ">";
+          }},
+          { "data": "category" },
+
+      ],
+      "oLanguage": { //国际化配置
+    	  "sProcessing": "正在获取数据，请稍后...",
+    	  "sLengthMenu": "显示 _MENU_ 条",
+    	  "sZeroRecords": "没有您要搜索的内容",
+    	  "sInfo": "从 _START_ 到 _END_ 条记录 总记录数为 _TOTAL_ 条",
+    	  "sInfoEmpty": "记录数为0",
+    	  "sInfoFiltered": "(全部记录数 _TOTAL_ 条)",
+    	  "sInfoPostFix": "",
+    	  "sSearch": "搜索",
+    	  "sUrl": "",
+    	  "oPaginate": {
+    	  "sFirst": "第一页",
+    	  "sPrevious": "上一页",
+    	  "sNext": "下一页",
+    	  "sLast": "最后一页"
+    	  }
+      }
+    });
+
+/* 	   $.getJSON("findAllByPage/1.do",function(result){
+			  setTableBodyRows(result.article);
+		   }); */
+	/* 替换datatable的搜索 */
+    $("#datatable_filter").css("display","none");
+    var html ='<div class="input-group-btn pull-right"><button type="button" class="btn btn-default btn-add">添加</button><button type="button" class="btn btn-default btn-update">修改</button><button type="button" class="btn btn-default btn-delete">删除</button></div>';
+    $("#datatable_filter").parent().append(html);
+    /* 为按钮添加事件 */
+    $(".btn-add").click(doAddObject);
+    $(".btn-update").click(doUpdateObject);
+    $(".btn-delete").click(doDeleteObject);
+  });
+  function doAddObject(){
+	  title="添加文章分类";
+	  doLoadEdit(title);
+  }
+  function doUpdateObject(){
+	   title="修改文章分类";
+	   var id=getCheckedId();
+		if(typeof(id)=="undefined"){
+			 alert("请选择要修改的数据");
+			 return;
+		 } 
+	   $(".content-wrapper").data("id",id);
+	  doLoadEdit(title);
+  }
+  function doDeleteObject(){
+	 var id=getCheckedId();
+	 if(typeof(id)=="undefined"){
+		 alert("请选择要删除的数据");
+		 return;
+	 } 
+	 var r=confirm("是否删除数据？")
+	  if (r==true)
+	    {
+		  var url="articleType/deleteObject.do";
+			 var params={"id":id}
+			 $.getJSON(url,params,function(result){
+				 if(result.state==1){
+					$(".content-wrapper").load("articleType/listUI.do");
+					$(".content-wrapper").removeData("id");
+				 }else{
+					alert(result.message);
+				 }
+			 })
+	    }
+	
+  }
+  function getCheckedId(){
+	   return $("tbody input[name='radioId']:checked").val();
+  }
+  function doLoadEdit(title){
+	   var url="articleType/editUI.do"
+	   $(".content-wrapper").load(url,function(){
+		   $(".card-title").html(title);
+	   }) 
+  }
+</script>
