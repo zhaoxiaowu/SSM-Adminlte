@@ -1,7 +1,7 @@
 package com.ssm.adminlte.entity;
 
 public class User {
-    private String id;
+    private Integer id;
 
     private String usercode;
 
@@ -13,15 +13,15 @@ public class User {
 
     private String locked;
 
-    public String getId() {
-        return id;
-    }
+    public Integer getId() {
+		return id;
+	}
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public String getUsercode() {
+	public String getUsercode() {
         return usercode;
     }
 

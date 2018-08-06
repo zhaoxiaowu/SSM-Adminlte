@@ -6,11 +6,11 @@ public interface UserService {
 	
 	public int saveUser(User User);
 	
-	public void deleteUser(String id);
+	public void deleteUser(Integer id);
 	
 	public void modifyUser(User User);
 	
-	public User findUser(String id);
+	public User findUser(Integer id);
 	
 	public User findUserByUserCode(String usercode);
 

@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ssm.adminlte.dao.PermissionMapper" >
   <resultMap id="BaseResultMap" type="com.ssm.adminlte.entity.Permission" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="percode" property="percode" jdbcType="VARCHAR" />
-    <result column="parentid" property="parentid" jdbcType="BIGINT" />
+    <result column="parentid" property="parentid" jdbcType="INTEGER" />
     <result column="parentids" property="parentids" jdbcType="VARCHAR" />
     <result column="sortstring" property="sortstring" jdbcType="VARCHAR" />
     <result column="available" property="available" jdbcType="CHAR" />
@@ -15,23 +15,23 @@
   <sql id="Base_Column_List" >
     id, name, type, url, percode, parentid, parentids, sortstring, available
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="int" >
     select 
     <include refid="Base_Column_List" />
     from sys_permission
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="int" >
     delete from sys_permission
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.ssm.adminlte.entity.Permission" >
     insert into sys_permission (id, name, type, 
       url, percode, parentid, 
       parentids, sortstring, available
       )
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
-      #{url,jdbcType=VARCHAR}, #{percode,jdbcType=VARCHAR}, #{parentid,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{url,jdbcType=VARCHAR}, #{percode,jdbcType=VARCHAR}, #{parentid,jdbcType=INTEGER}, 
       #{parentids,jdbcType=VARCHAR}, #{sortstring,jdbcType=VARCHAR}, #{available,jdbcType=CHAR}
       )
   </insert>
@@ -68,7 +68,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
@@ -83,7 +83,7 @@
         #{percode,jdbcType=VARCHAR},
       </if>
       <if test="parentid != null" >
-        #{parentid,jdbcType=BIGINT},
+        #{parentid,jdbcType=INTEGER},
       </if>
       <if test="parentids != null" >
         #{parentids,jdbcType=VARCHAR},
@@ -112,7 +112,7 @@
         percode = #{percode,jdbcType=VARCHAR},
       </if>
       <if test="parentid != null" >
-        parentid = #{parentid,jdbcType=BIGINT},
+        parentid = #{parentid,jdbcType=INTEGER},
       </if>
       <if test="parentids != null" >
         parentids = #{parentids,jdbcType=VARCHAR},
@@ -124,7 +124,7 @@
         available = #{available,jdbcType=CHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ssm.adminlte.entity.Permission" >
     update sys_permission
@@ -132,10 +132,27 @@
       type = #{type,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
       percode = #{percode,jdbcType=VARCHAR},
-      parentid = #{parentid,jdbcType=BIGINT},
+      parentid = #{parentid,jdbcType=INTEGER},
       parentids = #{parentids,jdbcType=VARCHAR},
       sortstring = #{sortstring,jdbcType=VARCHAR},
       available = #{available,jdbcType=CHAR}
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
+         <!-- 分页查询文章 -->
+   <select id="findObjectByPage"  resultType="map">
+         select c.*,(select name
+                     from sys_permission p 
+                     where c.parentId=p.id)  parentName
+         from sys_permission c
+         limit #{start},#{length}
+   </select>
+   <!-- 得到总记录数 -->
+   <select id="getRowCount" resultType="int">
+           select count(*)
+           from sys_permission
+    </select>
+        <select id="findZTreeNodes" resultType="com.ssm.common.entity.Node">
+        select id,name,parentid
+        from sys_permission        
+    </select>
 </mapper>

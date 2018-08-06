@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.adminlte.dao.SysRolePermissionDao">
+    
+      <delete id="deleteObjectByRoleId"
+              parameterType="int">
+           delete from sys_role_permission
+           where role_id=#{roleId}
+      </delete>
+      
+      <delete id="deleteObjectByPermissionId"
+              parameterType="int">
+           delete from sys_role_permission
+           where permission_id=#{permissionId}
+      </delete>
+    
+      <!-- 查询关系表中是否有对应的permissionId -->
+      <select id="getPermissionCount"
+              resultType="int">
+           select count(*)
+           from sys_role_permission
+           where permission_id=#{permissionId}
+      </select>
+      
+      <!-- 根据角色id查询菜单 -->
+      <select id="findPermissionIdsByRoleId"
+              resultType="int">
+            select permission_id
+            from sys_role_permission
+            where role_id=#{roleId} 
+      </select>
+      
+      <insert id="insertObject">
+         insert into sys_role_permission
+         (role_id,permission_id)
+         values 
+         <foreach collection="permissionIds" 
+                  separator=","
+                  item="item">
+              (#{roleId},#{item})
+         </foreach>
+      </insert>
+      
+      
+      
+</mapper>
+
+
+

@@ -75,11 +75,11 @@
 	<!-- 配置session超时时间，单位分钟 -->
 	<error-page>
 		<error-code>404</error-code>
-		<location>/error/404.do</location>
+		<location>/WEB-INF/pages/common/404.html</location>
 	</error-page>
 	<error-page>
 		<error-code>500</error-code>
-		<location>/error/500.do</location>
+		<location>/WEB-INF/pages/common/500.html</location>
 	</error-page>
 	<session-config>
 		<session-timeout>15</session-timeout>

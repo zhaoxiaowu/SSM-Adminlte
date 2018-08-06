@@ -15,7 +15,7 @@ public class UserServiceImpl implements UserService{
 		return userMapper.insert(User);
 	}
 	@Override
-	public void deleteUser(String id) {
+	public void deleteUser(Integer id) {
 		userMapper.deleteByPrimaryKey(id);
 	}
 	@Override
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService{
 		userMapper.updateByPrimaryKey(User);
 	}
 	@Override
-	public User findUser(String id) {
+	public User findUser(Integer id) {
 		return userMapper.selectByPrimaryKey(id);
 	}
 	@Override

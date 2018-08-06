@@ -1,0 +1,199 @@
+<div class="content-header">
+  <!-- Content Header (Page header) -->
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">角色管理</h1>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+<!-- /.content-header -->
+<!-- Horizontal Form -->
+ <div class="card card-info">
+      <div class="card-header with-border">
+        <h3 class="card-title">添加角色</h3>
+      </div>
+      <!-- /.card-header -->
+      <!-- form start -->
+      <form class="form-horizontal">
+        <div class="card-body">
+           <div class="form-group">
+             <div class="form-group">
+            <label for="nameId" class="col-sm-2 control-label">类型</label>
+            <div class="col-sm-10 typeRadio">
+              	<label class="radio-inline">
+				<input type="radio" name="typeId" value="1" checked> 菜单 </label>
+				<label class="radio-inline">
+				<input type="radio" name="typeId" value="2"> 按钮 </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="nameId" class="col-sm-2 control-label">权限名称</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control"  id="nameId" placeholder="名称">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="parentId" class="col-sm-2 control-label">上级菜单</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control load-sys-menu" readonly="readonly" id="parentId" placeholder="上级菜单">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="urlId" class="col-sm-2 control-label">URL</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control"  id="urlId" placeholder="url">
+            </div>
+          </div>
+          <div class="form-group">
+			<label for="permissionId" class="col-sm-2 control-label">授权标识</label>
+			<div class="col-sm-10">
+				<input type="text" id="permissionId"
+				       placeholder="多个用逗号分隔，如：user:list,user:create"
+					   class="form-control">
+			</div>
+		  </div>
+          </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+          <button type="button" class="btn btn-default btn-cancel">返回</button>
+          <button type="button" class="btn btn-info pull-right btn-save">保存</button>
+        </div>
+        <!-- /.card-footer -->
+      </form>
+      <div class="layui-layer layui-layer-page layui-layer-molv layer-anim" id="menuLayer" type="page" times="2" showtime="0" contype="object"
+		style="z-index:59891016; width: 300px; height: 450px; top: 100px; left: 500px; display:none">
+		<div class="layui-layer-title" style="cursor: move;">选择菜单</div>
+		<div class="layui-layer-content" style="height: 358px;">
+			<div style="padding: 10px;" class="layui-layer-wrap">
+				<ul id="menuTree" class="ztree"></ul>    <!-- 动态加载树 -->
+			</div>
+		</div>
+		<span class="layui-layer-setwin"> <a class="layui-layer-ico layui-layer-close layui-layer-close1 btn-cancle" ></a></span>
+		<div class="layui-layer-btn layui-layer-btn-">
+			<a class="layui-layer-btn0 btn-confirm">确定</a>
+			<a class="layui-layer-btn1 btn-cancel">取消</a>
+	     </div>
+      </div>
+    </div>
+<script  src="plugins/ztree/jquery.ztree.all.min.js"></script>
+<script  src="plugins/layer/layer.js"></script>
+<script type="text/javascript">
+var zTree; 
+//初始化zTree时会用到
+var setting = {
+	data : {
+		simpleData : {
+			enable : true,
+			idKey : "id",  //节点数据中保存唯一标识的属性名称
+			pIdKey : "parentid",  //节点数据中保存其父节点唯一标识的属性名称
+			rootPId : null  //根节点id
+		}//json 格式javascript对象
+	}
+}//json 格式的javascript对象
+ $(function(){
+	 var id=$(".content-wrapper").data("id");
+	 if(id) dofindpermissionById(id);
+	  $(".load-sys-menu").click(doLoadZTreeNodes);
+	  $(".btn-cancel").click(doCancel);
+	  $(".btn-save").click(doSaveOrUpdate);
+	  $(".layui-layer-btn")
+	  .on("click",".btn-cancel",doHideTree)
+	  .on("click",".btn-confirm",doConfirm);
+ });
+ function dofindpermissionById(id){
+	 var url="permission/findObjectById.do";
+	 var params={"id":id}
+	 $.getJSON(url,params,function(result){
+		 if(result.state==1){
+			doInitFormData(result.data);
+		 }else{
+			alert(result.message);
+		 }
+	 })
+ }
+ function doInitFormData(data){
+	 console.log(data);
+	 //初始化信息 
+	  $(".typeRadio input[value='"+data.type+"']").prop("checked",true);
+	  $("#nameId").val(data.name);
+	  $("#urlId").val(data.url);
+	  $("#permissionId").val(data.permission);
+	  $("#parentId").val(data.parentName);
+	  $(".form-horizontal")
+	  .data("parentId",data.parentId);
+ }
+ function doCancel(){
+	$(".content-wrapper").load("permission/listUI.do");
+	$(".content-wrapper").removeData("id");
+	$(".form-horizontal").removeData();
+ }
+ function doSaveOrUpdate(){
+	 var id=$(".content-wrapper").data("id");
+	 //1.获取表单数据
+	 var params=getEditFormData();
+	 if(id)params.id=id;
+	 //2.发起异步请求
+	 var insertUrl="permission/saveObject.do";
+	 var updateUrl="permission/updateObject.do";
+	 var url=id?updateUrl:insertUrl;
+	 console.log(params);
+	 $.post(url,params,function(result){
+		 if(result.state==1){
+			 alert(result.message);
+			 doCancel();
+		 }else{
+			alert(result.message);
+		 }
+	 })
+ }
+ function getEditFormData(){
+	 //获取输入的数据
+	  var params={
+			    type:$("form input[name='typeId']:checked").val(),
+				name:$("#nameId").val(),
+				url:$("#urlId").val(),
+				percode:$("#permissionId").val(),
+				parentid:$(".form-horizontal").data("parentid")
+			  }
+	return params;
+ }
+ function doHideTree(){
+	  $("#menuLayer").css("display","none");
+ }
+ //确定按钮
+ function doConfirm(){
+	  //1.获取选中的记录(id,name);
+	  var selectedNodes=
+	  zTree.getSelectedNodes();
+	  var node=selectedNodes[0];
+	  console.log(node);
+	  //2.将id和name填写或绑定在具体对象上
+	  $("#parentId").val(node.name);
+	  $(".form-horizontal").data("parentid",node.id)
+	  //3.隐藏zTree对应的Div
+	  doHideTree();
+ }
+ function doLoadZTreeNodes(){
+	  var url="permission/doFindZTreeNodes.do";
+	  $("#menuLayer").css("display","block");
+	  $.getJSON(url,function(result){
+		  if(result.state==1){
+			  zTree = $.fn.zTree.init(
+			  $("#menuTree"),
+			  setting,result.data);
+		  }else{
+			  alert(result.message);
+		  }
+	  });
+ }
+</script>
+    
+    
+    
+    
+    
+    
+    

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ssm.adminlte.dao.RoleMapper" >
   <resultMap id="BaseResultMap" type="com.ssm.adminlte.entity.Role" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="available" property="available" jdbcType="CHAR" />
   </resultMap>
@@ -68,4 +68,15 @@
       available = #{available,jdbcType=CHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+       <!-- 分页查询文章 -->
+   <select id="findObjectByPage"  resultType="map">
+           select *
+           from sys_role
+           limit #{start},#{length}
+   </select>
+   <!-- 得到总记录数 -->
+   <select id="getRowCount" resultType="int">
+           select count(*)
+           from sys_role
+    </select>
 </mapper>

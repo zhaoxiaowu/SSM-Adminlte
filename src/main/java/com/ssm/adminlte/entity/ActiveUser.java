@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public class ActiveUser implements Serializable{
-	private String userid;//用户id（主键）
+	private Integer userid;//用户id（主键）
 	private String usercode;// 用户账号
 	private String username;// 用户名称
 
@@ -29,11 +29,12 @@ public class ActiveUser implements Serializable{
 		this.usercode = usercode;
 	}
 
-	public String getUserid() {
+
+	public Integer getUserid() {
 		return userid;
 	}
 
-	public void setUserid(String userid) {
+	public void setUserid(Integer userid) {
 		this.userid = userid;
 	}
 

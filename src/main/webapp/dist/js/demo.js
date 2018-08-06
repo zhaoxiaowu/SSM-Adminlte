@@ -28,8 +28,8 @@
   ]
 
   $container.append(
-    '<h5>Customize AdminLTE</h5><hr class="mb-2"/>'
-    + '<h6>Navbar Variants</h6>'
+    '<h5>自定义主题颜色</h5><hr class="mb-2"/>'
+    + '<h6>导航条</h6>'
   )
 
   var $navbar_variants        = $('<div />', {
@@ -76,7 +76,7 @@
     }
   })
   $checkbox_container.append($navbar_border)
-  $checkbox_container.append('<span>Navbar border</span>')
+  $checkbox_container.append('<span>导航栏边框</span>')
   $container.append($checkbox_container)
 
 
@@ -101,7 +101,7 @@
     'sidebar-light-success'
   ]
 
-  $container.append('<h6>Dark Sidebar Variants</h6>')
+  $container.append('<h6>黑色侧边栏</h6>')
   var $sidebar_variants = $('<div />', {
     'class': 'd-flex'
   })
@@ -117,7 +117,7 @@
     $sidebar.addClass(sidebar_class)
   }))
 
-  $container.append('<h6>Light Sidebar Variants</h6>')
+  $container.append('<h6>白色侧边栏</h6>')
   var $sidebar_variants = $('<div />', {
     'class': 'd-flex'
   })
@@ -134,7 +134,7 @@
   }))
 
   var logo_skins = navbar_all_colors
-  $container.append('<h6>Brand Logo Variants</h6>')
+  $container.append('<h6>网站LOGO</h6>')
   var $logo_variants = $('<div />', {
     'class': 'd-flex'
   })
